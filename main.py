@@ -1,154 +1,155 @@
 import os
-import time
+from datetime import datetime
 import threading
+import time
+import sys
 
-from constants import *
-
-
-import requests
+import requests as req
+import PyPDF2
 import pandas as pd
 
-
-
-# FILE_PATH = r'C:\repos\PDF_Downloader\_files\GRI_2017_2020 (1).xlsx'
-# OUTPUT_PATH = r'C:\repos\PDF_Downloader\output_dir'
-
-# ID_COL_NAME = 'BRnum'
-# URL_COL_NAME = 'Pdf_URL'
-# URL_BACKUP_COL_NAME = 'Report Html Address'
+import remove_files
+from constants import *
 
 ID_COL = None
 URL_COL = None
 URL_BACKUP = None
-RESULTS = dict[bool, list[str]]
+DONE = False
+
+
+def on_start_up():
+    _output = open(OUTPUT_FILE, 'w')
+    _output.close()
+
+    if CLEAN_OUTPUT:
+        clean_output()
+
+
+def report_result(id : str, file_name : str) -> None:
+    def success():
+        with open(OUTPUT_FILE, 'a') as myfile:
+            myfile.write(id + "\n")
+    try:
+        PyPDF2.PdfFileReader(open(file_name, 'rb'), strict=False)
+        success()
+    except:
+        os.remove(file_name)
+        return
+
+def loading_animation():
+    import itertools
+
+    for c in itertools.cycle(['|', '/', '-', '\\']):
+        if DONE:
+            break
+        sys.stdout.write('\rloading ' + c)
+        sys.stdout.flush()
+        time.sleep(0.1)
+    sys.stdout.write('\rDone!     ')
+
+
+def get_names(_start: int, _end: int, _id: int):
+    def is_not_url(url_str : str) -> bool:
+        return not url_str.lower().startswith('http')
+
+    def on_success(pdf) -> None:
+        if DOWNLOAD_FILES:
+            file_name = os.path.join(OUTPUT_PATH, f"{id}.pdf")
+            try:
+                open(file_name, 'wb').write(pdf.content)
+            except:
+                os.remove(file_name)
+                return
+            finally:
+                report_result(id, file_name)
+
+    midway_point = int((_end - _start) / 2) + _start
+
+    for i in range(_start, _end):
+        if i == midway_point:
+            print(f"{_id} halfway there")
+            sys.stdout.flush()
+
+        url = str(URL_COL[i])
+        url_backup = str(URL_BACKUP[i])
+        id = ID_COL[i]
+
+        # Check if valid URL address.
+        for item in [url, url_backup]:
+            if is_not_url(item):
+                continue
+            try:
+                pdf = req.get(url=url, allow_redirects=True, timeout=TIMEOUT_REQUEST_MAX, stream=True)
+                pdf.raise_for_status()
+                if pdf.status_code == 200:
+                    on_success(pdf)
+                    break
+            except:
+                pass
 
 
 
-def get_pdfs(start : int, end : int) -> None:
-    for i in range(start, end):
-        URL = URL_COL[i]
-        if type(URL) != str:
-            continue
-        if str(URL).lower().startswith('http') == False:
-            continue
 
-        pdf = requests.get(url=URL, allow_redirects=True)
-        # pdf = requests.get(url_col[i], allow_redirects=True)
-        if pdf.status_code == 200:
-            RESULTS[True].append(ID_COL[i])
-            continue
-            open(os.path.join(OUTPUT_PATH, f"{ID_COL[i]}.pdf"), 'wb').write(pdf.content)
-        RESULTS[False].append(ID_COL[i])
+def main():
+    #loading
+    loading = threading.Thread(target=loading_animation)
+    loading.start()
 
-
-def _get_pdfs(start : int, end = int) -> None:
-    for i in range(start, end):
-        URL = URL_COL[i]
-        if type(URL) != str:
-            continue
-        if str(URL).lower().startswith('http') == False:
-            continue
-
-        pdf = requests.get(url=URL, allow_redirects=True)
-        # pdf = requests.get(url_col[i], allow_redirects=True)
-        if pdf.status_code == 200:
-            open(os.path.join(OUTPUT_PATH, f"{ID_COL[i]}.pdf"), 'wb').write(pdf.content)
-
-
-
-def main() -> None:
     sheet = pd.ExcelFile(FILE_PATH).parse(0)
+    print("EXCEL HAS BEEN LOADED")
+
+    s = time.perf_counter()
     # Columns
     global ID_COL
     global URL_COL
     global URL_BACKUP
+    global DONE
     ID_COL = sheet[ID_COL_NAME]
     URL_COL = sheet[URL_COL_NAME]
     URL_BACKUP = sheet[URL_BACKUP_COL_NAME]
-    # Dictionary
-    global RESULTS
-    RESULTS[True] = []
-    RESULTS[False] = []
 
-
-    #Test we got data
     assert type(ID_COL) == pd.core.series.Series
     assert type(URL_COL) == pd.core.series.Series
     assert type(URL_BACKUP) == pd.core.series.Series
 
-    t1 = threading.Thread(target=get_pdfs, args=(0, 19,))
-    t2 = threading.Thread(target=get_pdfs, args=(20, 39,))
 
-    t1.start()
-    t2.start()
+    total_row_count = int(ID_COL.size / CAP_TOTAL_AMOUNT_OF_ROWS)
+    amount = int(total_row_count / NUMBER_OF_THREADS)
 
-    t1.join()
-    t2.join()
+    # print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Estimated time: {(((total_row_count / NUMBER_OF_THREADS) * TIMEOUT_REQUEST_MAX) / 60) * 2.5:0.2f}min")
 
-    for succ in RESULTS[True]:
-        print(succ)
+    threads = []
 
-    for fail in RESULTS[False]:
-        print("\t" + succ)
+    for x in range(NUMBER_OF_THREADS):
+        start_value = x * amount
+        end_value = amount * (x + 1)
+        if x == NUMBER_OF_THREADS - 1:
+            end_value += 1
 
+        t = threading.Thread(target=get_names, name=f"T{x + 1}", args=(start_value, end_value, x,))
+        threads.append(t)
 
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
 
-def pandas_main() -> None:
-    print("Time starts now!")
-    tim = time.process_time()
-
-    xls = pd.ExcelFile(FILE_PATH)
-    sheet = xls.parse(0)
-    print(f"Excel loaded:\t{time.process_time() - tim}")
-
-    id_col = sheet[ID_COL_NAME]
-    url_col = sheet[URL_COL_NAME]
-    url_backup = sheet[URL_BACKUP_COL_NAME]
-
-
-
-    for i in range(20):
-        URL = url_col[i]
-        if str(URL).lower().startswith('http') == False:
-            continue
-
-        pdf = requests.get(url=URL, allow_redirects=True)
-        # pdf = requests.get(url_col[i], allow_redirects=True)
-        if pdf.status_code == 200:
-            open(os.path.join(OUTPUT_PATH, f"{id_col[i]}.pdf"), 'wb').write(pdf.content)
-            print(f"print {i + 1}:\t{time.process_time() - tim}")
-
-
+    elapsed = time.perf_counter() - s
+    DONE = True
+    print(f"Executed in {elapsed / 60:0.2f}min.")
 
 
 def clean_output() -> None:
     for x in os.listdir(OUTPUT_PATH):
-        # print(os.path.join(OUTPUT_PATH, x))
         os.remove(os.path.join(OUTPUT_PATH, x))
-        # os.remove(x)
-
 
 
 if __name__ == "__main__":
-    clean_output()
+    on_start_up()
+    print(f"START:\t{datetime.now().strftime('%H:%M:%S')}")
+    # print(f"START:\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     main()
-
-# # Overwrites existing text
-# # w = Write
-# output_file = open("hello.txt", "w")
-# output_file.writelines("I thought what I'd do was, I'd pretend to be one of those deaf-mutes.\n\t- J. D. Salinger\n\n")
-
-# lines_to_write = [
-#     "Veni, vidi, vici",
-#     "\nI came",
-#     "\nI saw",
-#     "\nI conquered"
-# ]
-# output_file.writelines(lines_to_write)
-
-# output_file.close()
-
-# # a = Appends
-# output_file = open("hello.txt", "a")
-# output_file.writelines("\n\t- Some Dork")
-# output_file.close()
+    remove_files.remove_invalid_files()
+    print(f"END:\t{datetime.now().strftime('%H:%M:%S')}")
+    # print(f"END:\t{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")

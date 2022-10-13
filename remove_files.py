@@ -17,3 +17,6 @@ def remove_invalid_files():
         file, ext = os.path.splitext(x)
         if file not in file_list:
             os.remove(os.path.join(OUTPUT_PATH, x))
+
+
+remove_invalid_files()
