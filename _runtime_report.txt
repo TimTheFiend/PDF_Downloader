@@ -8,8 +8,10 @@ threadpool_test
 
     10 Threads:
         13:39:45        Executed in 8.68min.
-
+        14:49:17        Executed in 8.47min.
 
     Skipping over previous successes:
         10 Threads:
             13:48:33        Executed in 5.59min.
+            14:07:59        Executed in 4.84min.
+            14:22:01        Executed in 4.70min.
