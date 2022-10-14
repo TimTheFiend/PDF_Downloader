@@ -14,7 +14,6 @@ ID_COL = None
 URL_COL = None
 URL_BACKUP = None
 
-MAX_ROWS = None
 
 FILES_IN_OUTPUT = None
 

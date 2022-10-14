@@ -12,6 +12,9 @@ Indtast følgende ind og vent på installationen færdiggøres:<br>
 `pip install -r requirements.txt`<br>
 Nu er Python klar til at kører programmet.
 
+## Start programmet
+Programmet kan startes via `cmd` ved at skrive: "`py -m main.py`".
+
 ## Indstillinger
 For at køre programmet skal de relevante data indsættes i filen [constants.py](constants.py). Følgende linjer skal sættes for at programmet kan køre.<br>
 ### FILE/DIRECTORY INFORMATION
