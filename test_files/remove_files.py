@@ -1,4 +1,4 @@
-from constants import OUTPUT_FILE, OUTPUT_PATH
+from constants import OUTPUT_FILE, OUTPUT_DIR
 import os
 
 def remove_invalid_files():
@@ -13,10 +13,10 @@ def remove_invalid_files():
                 continue
             file_list.append(line)
 
-    for x in os.listdir(OUTPUT_PATH):
+    for x in os.listdir(OUTPUT_DIR):
         file, ext = os.path.splitext(x)
         if file not in file_list:
-            os.remove(os.path.join(OUTPUT_PATH, x))
+            os.remove(os.path.join(OUTPUT_DIR, x))
 
 
 remove_invalid_files()

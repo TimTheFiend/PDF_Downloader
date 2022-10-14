@@ -54,7 +54,7 @@ def get_names(_start: int, _end: int, _id: int):
 
     def on_success(pdf) -> None:
         if DOWNLOAD_FILES:
-            file_name = os.path.join(OUTPUT_PATH, f"{id}.pdf")
+            file_name = os.path.join(OUTPUT_DIR, f"{id}.pdf")
             try:
                 open(file_name, 'wb').write(pdf.content)
             except:
@@ -95,7 +95,7 @@ def main():
     loading = threading.Thread(target=loading_animation)
     loading.start()
 
-    sheet = pd.ExcelFile(FILE_PATH).parse(0)
+    sheet = pd.ExcelFile(EXCEL_FILEPATH).parse(0)
     print("EXCEL HAS BEEN LOADED")
 
     s = time.perf_counter()
@@ -141,8 +141,8 @@ def main():
 
 
 def clean_output() -> None:
-    for x in os.listdir(OUTPUT_PATH):
-        os.remove(os.path.join(OUTPUT_PATH, x))
+    for x in os.listdir(OUTPUT_DIR):
+        os.remove(os.path.join(OUTPUT_DIR, x))
 
 
 if __name__ == "__main__":

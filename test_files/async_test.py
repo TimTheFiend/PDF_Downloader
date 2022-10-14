@@ -49,7 +49,7 @@ async def get_names(start: int, end: int, _id: int):
 
 
 async def main() -> None:
-    sheet = pd.ExcelFile(FILE_PATH).parse(0)
+    sheet = pd.ExcelFile(EXCEL_FILEPATH).parse(0)
     print("EXCEL HAS BEEN LOADED")
     # Columns
     global ID_COL

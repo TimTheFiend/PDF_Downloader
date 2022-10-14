@@ -19,7 +19,7 @@ ROWS_DONE = None
 
 def initialise_columns():
     print(f"{datetime.now().strftime('%H:%M:%S')}\tLoading spreadsheet.")
-    sheet = pd.ExcelFile(FILE_PATH).parse(0)
+    sheet = pd.ExcelFile(EXCEL_FILEPATH).parse(0)
 
     # Columns
     global ID_COL

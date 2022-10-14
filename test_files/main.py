@@ -37,7 +37,7 @@ def get_pdfs(start : int, end : int) -> None:
         if pdf.status_code == 200:
             RESULTS[True].append(ID_COL[i])
             continue
-            open(os.path.join(OUTPUT_PATH, f"{ID_COL[i]}.pdf"), 'wb').write(pdf.content)
+            open(os.path.join(OUTPUT_DIR, f"{ID_COL[i]}.pdf"), 'wb').write(pdf.content)
         RESULTS[False].append(ID_COL[i])
 
 
@@ -52,12 +52,12 @@ def _get_pdfs(start : int, end = int) -> None:
         pdf = requests.get(url=URL, allow_redirects=True)
         # pdf = requests.get(url_col[i], allow_redirects=True)
         if pdf.status_code == 200:
-            open(os.path.join(OUTPUT_PATH, f"{ID_COL[i]}.pdf"), 'wb').write(pdf.content)
+            open(os.path.join(OUTPUT_DIR, f"{ID_COL[i]}.pdf"), 'wb').write(pdf.content)
 
 
 
 def main() -> None:
-    sheet = pd.ExcelFile(FILE_PATH).parse(0)
+    sheet = pd.ExcelFile(EXCEL_FILEPATH).parse(0)
     # Columns
     global ID_COL
     global URL_COL
@@ -97,7 +97,7 @@ def pandas_main() -> None:
     print("Time starts now!")
     tim = time.process_time()
 
-    xls = pd.ExcelFile(FILE_PATH)
+    xls = pd.ExcelFile(EXCEL_FILEPATH)
     sheet = xls.parse(0)
     print(f"Excel loaded:\t{time.process_time() - tim}")
 
@@ -115,16 +115,16 @@ def pandas_main() -> None:
         pdf = requests.get(url=URL, allow_redirects=True)
         # pdf = requests.get(url_col[i], allow_redirects=True)
         if pdf.status_code == 200:
-            open(os.path.join(OUTPUT_PATH, f"{id_col[i]}.pdf"), 'wb').write(pdf.content)
+            open(os.path.join(OUTPUT_DIR, f"{id_col[i]}.pdf"), 'wb').write(pdf.content)
             print(f"print {i + 1}:\t{time.process_time() - tim}")
 
 
 
 
 def clean_output() -> None:
-    for x in os.listdir(OUTPUT_PATH):
+    for x in os.listdir(OUTPUT_DIR):
         # print(os.path.join(OUTPUT_PATH, x))
-        os.remove(os.path.join(OUTPUT_PATH, x))
+        os.remove(os.path.join(OUTPUT_DIR, x))
         # os.remove(x)
 
 

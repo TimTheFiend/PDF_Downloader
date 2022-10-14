@@ -26,10 +26,10 @@ def remove_invalid_files():
                 continue
             file_list.append(line)
 
-    for x in os.listdir(OUTPUT_PATH):
+    for x in os.listdir(OUTPUT_DIR):
         file, ext = os.path.splitext(x)
         if file not in file_list:
-            os.remove(os.path.join(OUTPUT_PATH, x))
+            os.remove(os.path.join(OUTPUT_DIR, x))
 
 
 def report_result(id : str, file_name : str) -> None:
@@ -54,7 +54,7 @@ def get_pdf(row_id: int) -> None:
 
     def on_success(pdf) -> None:
         if DOWNLOAD_FILES:
-            file_name = os.path.join(OUTPUT_PATH, f"{id}.pdf")
+            file_name = os.path.join(OUTPUT_DIR, f"{id}.pdf")
             try:
                 open(file_name, 'wb').write(pdf.content)
             except:
@@ -90,7 +90,7 @@ def process_get_pdf(row_count : int) -> None:
 
 
 def main():
-    sheet = pd.ExcelFile(FILE_PATH).parse(0)
+    sheet = pd.ExcelFile(EXCEL_FILEPATH).parse(0)
     print(f"{datetime.now().strftime('%H:%M:%S')}\tEXCEL HAS BEEN LOADED")
 
     s = time.perf_counter()
