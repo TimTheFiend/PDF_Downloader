@@ -13,7 +13,8 @@ Indtast følgende ind og vent på installationen færdiggøres:<br>
 Nu er Python klar til at kører programmet.
 
 ## Start programmet
-Programmet kan startes via `cmd` ved at skrive: "`py -m main.py`".
+Programmet kan startes via `cmd` ved at skrive: "`py -m main.py`".<br>
+Løbende bliver information udskrevet til `cmd`-vinduet om hvorhenne i processen den er nået.
 
 ## Indstillinger
 For at køre programmet skal de relevante data indsættes i filen [constants.py](constants.py). Følgende linjer skal sættes for at programmet kan køre.<br>
