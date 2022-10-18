@@ -101,11 +101,13 @@ def get_pdf(id : str, url_primary : str, url_secondary : str) -> None:
                 report_success(id, file_name)
 
     def check_if_skip(id: str) -> bool:
-        return f"{id}.pdf" in FILES_IN_OUTPUT_DIR
+        return f"{str(id)}.pdf" in TEMP_LIST
+        # return f"{id}.pdf" in FILES_IN_OUTPUT_DIR
     #endregion Internal functions
 
 
     if check_if_skip(id):
+        print()
         return
 
     for url in [url_primary, url_secondary]:
@@ -137,6 +139,7 @@ def process_get_pdf():
 #Create .txt-files that contains the result of the
 def create_result_files():
     global TEMP_LIST
+    #TODO This adds the file-extension as well, which isn't taken into consideration in remove_invalid_files
     TEMP_LIST = os.listdir(OUTPUT_DIR)
 
 
@@ -149,6 +152,11 @@ def create_result_files():
 
 # Removes files that aren't actually PDF.
 def remove_invalid_files():
+    for file in os.listdir(OUTPUT_DIR):
+        if file not in TEMP_LIST:
+            os.remove(os.path.join(OUTPUT_DIR, file))
+    return
+    """ORIGINAL CODE"""
     file_list = []
     with open(OUTPUT_FILE_SUCCESS, 'r') as myfile:
         while True:
@@ -165,6 +173,9 @@ def remove_invalid_files():
         file = os.path.splitext(x)[0]
         if file not in file_list:
             os.remove(os.path.join(OUTPUT_DIR, x))
+
+
+
 
 def write_to_excel():
     FILES_IN_OUTPUT = get_files_in_output()
@@ -183,10 +194,5 @@ def write_to_excel():
 
 if __name__ == "__main__":
     main()
-    print()
-    for x in TEMP_LIST:
-        if not str(x).startswith('B'):
-            print(str(x))
-    print()
     # initialise_columns()
     # write_to_excel()
