@@ -127,7 +127,10 @@ def main():
         if x == NUMBER_OF_THREADS - 1:
             end_value += 1
 
-        t = threading.Thread(target=get_names, name=f"T{x + 1}", args=(start_value, end_value, x,))
+        t = threading.Thread(
+            target=get_names,
+            name=f"T{x + 1}",
+            args=(start_value, end_value, x,))
         threads.append(t)
 
     for thread in threads:
