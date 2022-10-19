@@ -31,6 +31,16 @@ def main() -> None:
     elapsed = time.perf_counter() - s
     print(f"{datetime.now().strftime('%H:%M:%S')}\tExecuted in {elapsed / 60:0.2f}min.")
 
+
+def validate_file_paths() -> None:
+    if not os.path.exists(EXCEL_FILEPATH):
+        raise Exception("`constants\\EXCEL_FILEPATH` does not exist.")
+    if not os.path.splitext(EXCEL_FILEPATH)[1].lower() == ".xlsx":
+        raise Exception("`constants\\EXCEL_FILEPATH` is not an Excel-file (.xlsx).")
+    if not os.path.exists(OUTPUT_DIR):
+        raise Exception("`constants\\OUTPUT_DIR` does not exist.")
+
+
 #region Initialise global variables
 def initialise_columns() -> None:
     """Reads the input-file, and loads in the necessary columns into global variables."""
@@ -120,4 +130,6 @@ def cleanup_output_dir(id_col : list[str], is_dwn : list[bool]) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    validate_file_paths()
+
+    # main()
