@@ -1,0 +1,8 @@
+newest_main:
+    ☐ Check if OUTPUT_DIR exists.
+    ☐ Check if FILE_STATUS_EXCEL_FILEPATH exists.
+    ☐ Extract code after pool.close()
+        ☐ Write to Excel
+        ☐ Remove non-PDFs
+
+    ☐ Write dirlist to a .txt before and after `main()`
