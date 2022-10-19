@@ -17,6 +17,7 @@ URL_BACKUP = None
 ALREADY_DOWNLOADED = None
 
 def main() -> None:
+    validate_file_paths()
     initialise_columns()
     get_pdfs_in_output()
 
@@ -33,6 +34,7 @@ def main() -> None:
 
 
 def validate_file_paths() -> None:
+    """Kinda very much unneccessary I feel."""
     if not os.path.exists(EXCEL_FILEPATH):
         raise Exception("`constants\\EXCEL_FILEPATH` does not exist.")
     if not os.path.splitext(EXCEL_FILEPATH)[1].lower() == ".xlsx":
@@ -85,8 +87,8 @@ def process_get_pdf():
         id_col.append(_id)
         is_dwn_col.append(_dwn)
 
-    df = pd.DataFrame({'ID': id_col, 'Is downloaded': is_dwn_col})
-    df.to_excel(FILE_STATUS_EXCEL_FILEPATH, sheet_name='0', index=False)
+    df = pd.DataFrame({RESULT_EXCEL_ID_COL_NAME: id_col, RESULT_EXCEL_DOWNLOAD_COL_NAME: is_dwn_col})
+    df.to_excel(FILE_STATUS_EXCEL_FILEPATH, sheet_name=FILE_STATUS_EXCEL_SHEETNAME, index=False)
     #endregion Printing to Excel
 
     cleanup_output_dir(id_col=id_col, is_dwn=is_dwn_col)
@@ -130,6 +132,4 @@ def cleanup_output_dir(id_col : list[str], is_dwn : list[bool]) -> None:
 
 
 if __name__ == "__main__":
-    validate_file_paths()
-
-    # main()
+    main()
