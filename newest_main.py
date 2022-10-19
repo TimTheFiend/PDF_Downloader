@@ -73,6 +73,8 @@ def process_get_pdf():
     #region Threads
     pool = ThreadPool(processes=NUMBER_OF_THREADS)
     for i in range(ID_COL.size):
+        if f"{ID_COL[i]}.pdf" in ALREADY_DOWNLOADED:
+            continue
         results.append(pool.apply_async(get_pdf, (ID_COL[i], URL_COL[i], URL_BACKUP[i])))
 
     pool.close()
@@ -96,8 +98,8 @@ def process_get_pdf():
 
 def get_pdf(id : str, url_1st : str, url_2nd : str) -> list[str, bool]:
     # Return True if the file is already downloaded.
-    if f"{id}.pdf" in ALREADY_DOWNLOADED:
-        return [id, True]
+    # if f"{id}.pdf" in ALREADY_DOWNLOADED:
+    #     return [id, True]
 
     for url in [url_1st, url_2nd]:
         # Check (superficially) if string is a valid URL

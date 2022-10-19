@@ -4,5 +4,13 @@ newest_main:
     ☐ Extract code after pool.close()
         ☐ Write to Excel
         ☐ Remove non-PDFs
-
+    ☐ Look at HTML header in `get_pdf`
+    ☐ `get_pdf` parameters turn into class
+        - ID_COL, URL_COL [...]
+    ☐ Test how long it takes without `ALREADY_DOWNLOADED` being global
+        - Is added to `get_pdf` as parameter
+    ☐ User agent in `requests.get`
     ☐ Write dirlist to a .txt before and after `main()`
+
+
+    ☐ Increase # of threads
