@@ -4,13 +4,24 @@ newest_main:
     ☐ Extract code after pool.close()
         ☐ Write to Excel
         ☐ Remove non-PDFs
-    ☐ Look at HTML header in `get_pdf`
-    ☐ `get_pdf` parameters turn into class
+    ☐ `get_pdf` returns `bool` only
+    ✘ `get_pdf` parameters turn into class @cancelled(22-10-20 11:33)
         - ID_COL, URL_COL [...]
-    ☐ Test how long it takes without `ALREADY_DOWNLOADED` being global
         - Is added to `get_pdf` as parameter
+    ✘ Write dirlist to a .txt before and after `main()` @cancelled(22-10-20 11:33)
+    ☐ Write function that returns `[id, True]` is the ID is already downloaded
+    ✘ Make function that disables `sys.stdout` @cancelled(22-10-20 11:33)
+    ☐ Make function for printing timestamp + message
+    ✔ Increase # of threads @done(22-10-20 08:23)
+
+Presentation:
+    ✔ Make spreadsheet with runtime results @done(22-10-20 10:10)
+    ✔ Look through powerpoint @done(22-10-20 11:32)
+
+    testing:
+    ✔ Look at HTML header in `get_pdf` @done(22-10-20 10:01)
+    ✔ Test how long it takes without `ALREADY_DOWNLOADED` being global @done(22-10-20 11:32)
     ☐ User agent in `requests.get`
-    ☐ Write dirlist to a .txt before and after `main()`
-
-
-    ☐ Increase # of threads
+    ☐ Re-evalute functions that have stayed largely the same
+        ☐ main()
+        ☐ initialise_column()
